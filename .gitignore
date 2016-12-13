@@ -1,0 +1,10 @@
+*.o
+*.obj
+*.exe
+*.gz
+SDK-gcc-2.0/bin/
+SDK-gcc-2.0/build/
+SDK-gcc-2.0/future_net/.idea/
+SDK-gcc-2.0/future_net/bin/
+SDK-gcc-2.0/future_net/cmake-build-debug/
+case/
