@@ -3,3 +3,4 @@ bin
 build
 cmake*
 future_net.tar.gz
+result.csv

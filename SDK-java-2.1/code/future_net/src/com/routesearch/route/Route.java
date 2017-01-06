@@ -8,25 +8,27 @@
  * 实现代码文件
  *
  * @author XXX
- * @since 2016-4-11
  * @version V1.0
+ * @since 2016-4-11
  */
 package com.routesearch.route;
 
+import com.routesearch.util.TimeUtil;
 
-public final class Route
-{
+public final class Route {
     /**
      * 你需要完成功能的入口
      *
      * @author XXX
-     * @since 2016-3-4
      * @version V1
+     * @since 2016-3-4
      */
-    public static String[] searchRoute(String[] graphContent, String[] condition)
-    {
+    public static String[] searchRoute(String[] graphContent, String[] condition) {
         /**do your work here**/
-        return new String[]{"0|1|2","5|6|2"};
+        TimeUtil.updateTime();
+        Graph.makeGraph(graphContent,condition);
+        System.out.println("read graph: "+TimeUtil.getTimeDelay()+"ms");
+        return new String[]{"0|1|2", "5|6|2"};
     }
 
 }
