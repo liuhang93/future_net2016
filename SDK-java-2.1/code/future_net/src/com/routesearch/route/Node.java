@@ -5,7 +5,7 @@ package com.routesearch.route;
  * 顶点类
  */
 public class Node {
-    public int state;
+    public int state;//0非必经,1路径1必经,2路径2必经,3起点或终点(两条路都必经)
     public int inDeg; //入度
     public int outDeg;//出度
     public int[] out = new int[Graph.outDegMax];

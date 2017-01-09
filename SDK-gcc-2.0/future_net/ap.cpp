@@ -150,7 +150,7 @@ void KM()                //返回最优匹配的值
 	root.apSum=result;
 }
 
-void AP()
+void AP()//Assignment problem
 {
 	memset(s, 0, sizeof(s));
 	int visit[verMax] = {0};
