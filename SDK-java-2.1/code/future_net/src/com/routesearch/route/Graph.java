@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 /**
  * Created by liuhang on 2017/1/5.
- * 图类,邻接矩阵存储
+ * 图类,邻接矩阵及邻接表
  */
 public class Graph {
 
