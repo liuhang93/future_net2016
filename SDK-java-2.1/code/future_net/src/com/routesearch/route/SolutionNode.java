@@ -22,9 +22,14 @@ public class SolutionNode implements Cloneable {
 class MyComparator implements Comparator<SolutionNode> {
     @Override
     public int compare(SolutionNode o1, SolutionNode o2) {
-        if (Search.currentSolutionNode.ringNum > 5) {
-            return o1.apSum*o1.ringNum - o2.apSum*o2.ringNum;
+        if (Search.currentSolutionNode.ringNum > 10) {
+            return o1.ringNum*o1.apSum - o2.apSum*o2.ringNum;
         }
-        return o1.apSum - o2.apSum;
+//        return o1.apSum - o2.apSum;
+        if (o1.apSum == o2.apSum) {
+            return o1.ringNum - o2.ringNum;
+        }else {
+            return o1.apSum - o2.apSum;
+        }
     }
 }
