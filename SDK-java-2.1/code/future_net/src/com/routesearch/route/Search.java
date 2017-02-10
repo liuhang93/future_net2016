@@ -30,7 +30,7 @@ public class Search {
     public static SolutionNode currentSolutionNode;//从优先队列中取出的解节点
 
     //分支定界法
-    public static void branchAndBound(int routeId, long timeLimit) {
+    public static List<Integer> branchAndBound(int routeId, long timeLimit) {
         TimeUtil.updateTime();
         onlyOneRing = false;
         upBound = MAX_VALUE;
@@ -46,7 +46,7 @@ public class Search {
             }
             bestRoute = allRoutes.get(0);
             printRoutes();
-            return;
+            return bestRoute;
         }
         //进行分支,选择最短的环,破开,修改目标矩阵
         getRequiredAndForbidden(currentSolutionNode);
@@ -82,6 +82,7 @@ public class Search {
             getRequiredAndForbidden(currentSolutionNode);
         }
         printRoutes();
+        return bestRoute;
     }
 
     //初始化目标矩阵
