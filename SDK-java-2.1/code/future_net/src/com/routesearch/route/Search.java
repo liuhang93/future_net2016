@@ -17,17 +17,20 @@ import java.util.Queue;
  */
 public class Search {
     private static final int weightMax = 100;//权重最大值
-    private static final int Max = 10000;
+    private static final int MAX_VALUE = 10000;//一个很大值
 
     private static Queue<SolutionNode> queue = new PriorityQueue<>(3, new MyComparator());
     private static List<List<Integer>> allRoutes = new ArrayList<>(); //一次ap之后,存放所有的环
     private static int[][] target = new int[Graph.vertexNum][Graph.vertexNum];//ap的目标矩阵
     private static int shortestRingIndex;//一次ap后,所有环中顶点数最少的环的索引
-    private static int upBound = Integer.MAX_VALUE;//分支定界的上界
+    private static int upBound;//分支定界的上界
     public static SolutionNode currentSolutionNode;
 
     //分支定界法
-    public static void branchAndBound(int routeId) {
+    public static void branchAndBound(int routeId,long timeLimit) {
+        TimeUtil.updateTime();
+        upBound = MAX_VALUE;
+        queue.clear();
         currentSolutionNode = new SolutionNode();
         initialTargetMatrix(routeId);
         KM.AP(routeId, currentSolutionNode, target);
@@ -44,7 +47,7 @@ public class Search {
 
         //用优先队列,遍历节点
         while (!queue.isEmpty()) {
-            if (TimeUtil.getUsedTime() > 2000) {
+            if (TimeUtil.getTimeDelay() > timeLimit) {
                 break;
             }
             currentSolutionNode = queue.poll();
@@ -75,7 +78,7 @@ public class Search {
                 if (Graph.edgeWeight[i][j] != 0) {
                     target[i][j] = weightMax - Graph.edgeWeight[i][j];
                 } else if (i != j || routeId == Graph.nodes[i].state || Graph.nodes[i].state == 3) {
-                    target[i][j] = weightMax-Max;
+                    target[i][j] = weightMax- MAX_VALUE;
                 } else {
                     target[i][j] = weightMax;//不是必经节点时,让它易于同自己连接(自己成环)
                 }
@@ -163,14 +166,14 @@ public class Search {
         for (Map.Entry<Integer, Integer> entry : solutionNode.forbidden.entrySet()) {
             int id1 = entry.getKey();
             int id2 = entry.getValue();
-            modifiedTargetMatrix[id1][id2] -= Max;
+            modifiedTargetMatrix[id1][id2] -= MAX_VALUE;
         }
         for (Map.Entry<Integer, Integer> entry : solutionNode.required.entrySet()) {
             int id1 = entry.getKey();
             int id2 = entry.getValue();
             for (int i = 0; i < Graph.vertexNum; i++) {
                 if (i != id2) {
-                    modifiedTargetMatrix[id1][i] -= Max;
+                    modifiedTargetMatrix[id1][i] -= MAX_VALUE;
                 }
             }
         }

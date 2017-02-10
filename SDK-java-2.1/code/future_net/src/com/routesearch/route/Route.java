@@ -28,7 +28,8 @@ public final class Route {
         TimeUtil.updateTime();
         Graph.makeGraph(graphContent,condition);
         System.out.println("read graph: "+TimeUtil.getTimeDelay()+"ms");
-        Search.branchAndBound(1);
+        Search.branchAndBound(1,2000);
+        Search.branchAndBound(2,2000);
         return new String[]{"0|1|2", "5|6|2"};
     }
 
