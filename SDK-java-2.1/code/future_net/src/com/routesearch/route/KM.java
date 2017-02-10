@@ -8,18 +8,17 @@ import java.util.Arrays;
  */
 public class KM {
     private static final int INF = Integer.MAX_VALUE;
-    private static final int weightMax = 100;//权重最大值
 
-    private static int N;
-    private static int[][] weight;
-    private static int[] lx;
-    private static int[] ly;
-    private static boolean[] visitx;
-    private static boolean[] visity;
-    private static int[] link;//(i,link[i])表示顶点i被顶点link[i]所连接;
-    private static int[] slack;
+    private static int N = Graph.vertexNum;
+    private static int[][] weight = new int[N][N];
+    private static int[] lx = new int[N];
+    private static int[] ly = new int[N];
+    private static boolean[] visitx = new boolean[N];
+    private static boolean[] visity = new boolean[N];
+    private static int[] link = new int[N];//(i,link[i])表示顶点i被顶点link[i]所连接;
+    private static int[] slack = new int[N];
 
-    private static int routeId;
+    private static int routeId;//路径Id,第几条路径
 
     private static void init() {
         Arrays.fill(link, -1);
@@ -84,40 +83,16 @@ public class KM {
                     if (visity[i])
                         ly[i] += d;
                     else
-                        slack[i] -= d;//
+                        slack[i] -= d;
                 }
             }
         }
-        int result = 0;
-        for (int i = 0; i < N; i++) {
-            if (link[i] > -1) {
-                System.out.println(link[i] + "->" + i);
-                result += Graph.edgeWeight[link[i]][i];
-            }
-        }
-        System.out.println("weight sum: " + result);
     }
 
-    public static void AP(int id, SolutionNode solutionNode) {
-        N = Graph.vertexNum;
-        weight = new int[N][N];
-        link = new int[N];
-        lx = new int[N];
-        ly = new int[N];
-        visitx = new boolean[N];
-        visity = new boolean[N];
-        slack = new int[N];
-        routeId = id;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (Graph.edgeWeight[i][j] != 0) {
-                    weight[i][j] = weightMax - Graph.edgeWeight[i][j];
-                } else if (i != j || routeId == Graph.nodes[i].state || Graph.nodes[i].state == 3) {
-                    weight[i][j] = 0;
-                } else {
-                    weight[i][j] = weightMax;//不是必经节点时,让它易于同自己连接(自己成环)
-                }
-            }
+    public static void AP(int routeid, SolutionNode solutionNode, int[][] target) {
+        routeId = routeid;
+        for (int i = 0; i < target.length; i++) {
+            weight[i] = Arrays.copyOf(target[i], target[i].length);
         }
         KM();
         solutionNode.link = Arrays.copyOf(link, link.length);

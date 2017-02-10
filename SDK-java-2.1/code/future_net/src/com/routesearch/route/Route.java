@@ -27,8 +27,8 @@ public final class Route {
         /**do your work here**/
         TimeUtil.updateTime();
         Graph.makeGraph(graphContent,condition);
-        KM.AP(1);
         System.out.println("read graph: "+TimeUtil.getTimeDelay()+"ms");
+        Search.branchAndBound(1);
         return new String[]{"0|1|2", "5|6|2"};
     }
 
