@@ -1,5 +1,7 @@
 package com.routesearch.route;
 
+import com.routesearch.util.TimeUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +17,7 @@ import java.util.Queue;
  */
 public class Search {
     private static final int weightMax = 100;//权重最大值
+    private static final int Max = 10000;
 
     private static Queue<SolutionNode> queue = new PriorityQueue<>(3, new MyComparator());
     private static List<List<Integer>> allRoutes = new ArrayList<>(); //一次ap之后,存放所有的环
@@ -33,6 +36,7 @@ public class Search {
             if (currentSolutionNode.apSum < upBound) {
                 upBound = currentSolutionNode.apSum;
             }
+            printRoutes();
             return;
         }
         //进行分支,选择最短的环,破开,修改目标矩阵
@@ -40,6 +44,9 @@ public class Search {
 
         //用优先队列,遍历节点
         while (!queue.isEmpty()) {
+            if (TimeUtil.getUsedTime() > 2000) {
+                break;
+            }
             currentSolutionNode = queue.poll();
             if (currentSolutionNode.apSum > upBound) {
                 break;
@@ -55,7 +62,7 @@ public class Search {
                     upBound = currentSolutionNode.apSum;
                 }
                 printRoutes();
-                break;
+                continue;
             }
             getRequiredAndForbidden(currentSolutionNode);
         }
@@ -68,12 +75,13 @@ public class Search {
                 if (Graph.edgeWeight[i][j] != 0) {
                     target[i][j] = weightMax - Graph.edgeWeight[i][j];
                 } else if (i != j || routeId == Graph.nodes[i].state || Graph.nodes[i].state == 3) {
-                    target[i][j] = 0;
+                    target[i][j] = weightMax-Max;
                 } else {
                     target[i][j] = weightMax;//不是必经节点时,让它易于同自己连接(自己成环)
                 }
             }
         }
+        target[Graph.vertexDemand[0][1]][Graph.vertexDemand[0][0]] = weightMax;
     }
 
     //获取破开的边,并加入队列
@@ -135,14 +143,14 @@ public class Search {
             }
             ringNum++;
             Collections.reverse(route);
-            for (int k = 0; k < route.size() - 2; k++) {
+            for (int k = 0; k < route.size() - 1; k++) {
                 apSum += Graph.edgeWeight[route.get(k)][route.get(k + 1)];
             }
             allRoutes.add(route);
         }
         solutionNode.apSum = apSum;
         solutionNode.ringNum = ringNum;
-        System.out.println("ringNum:" + ringNum + ";apSum:" + apSum);
+//        System.out.println("ringNum:" + ringNum + ";apSum:" + apSum);
     }
 
     private static int[][] modifyTargetMatrix(SolutionNode solutionNode) {
@@ -155,14 +163,14 @@ public class Search {
         for (Map.Entry<Integer, Integer> entry : solutionNode.forbidden.entrySet()) {
             int id1 = entry.getKey();
             int id2 = entry.getValue();
-            modifiedTargetMatrix[id1][id2] -= weightMax;
+            modifiedTargetMatrix[id1][id2] -= Max;
         }
         for (Map.Entry<Integer, Integer> entry : solutionNode.required.entrySet()) {
             int id1 = entry.getKey();
             int id2 = entry.getValue();
             for (int i = 0; i < Graph.vertexNum; i++) {
                 if (i != id2) {
-                    modifiedTargetMatrix[id1][i] -= weightMax;
+                    modifiedTargetMatrix[id1][i] -= Max;
                 }
             }
         }
