@@ -24,11 +24,15 @@ public class Search {
     private static int[][] target = new int[Graph.vertexNum][Graph.vertexNum];//ap的目标矩阵
     private static int shortestRingIndex;//一次ap后,所有环中顶点数最少的环的索引
     private static int upBound;//分支定界的上界
-    public static SolutionNode currentSolutionNode;
+    private static boolean onlyOneRing;//ap之后是否只有一个环
+    private static long bestTime;//更新上界时的时间
+    private static List<Integer> bestRoute;//存放当前权值最低路径
+    public static SolutionNode currentSolutionNode;//从优先队列中取出的解节点
 
     //分支定界法
-    public static void branchAndBound(int routeId,long timeLimit) {
+    public static void branchAndBound(int routeId, long timeLimit) {
         TimeUtil.updateTime();
+        onlyOneRing = false;
         upBound = MAX_VALUE;
         queue.clear();
         currentSolutionNode = new SolutionNode();
@@ -36,9 +40,11 @@ public class Search {
         KM.AP(routeId, currentSolutionNode, target);
         getRoute(routeId, currentSolutionNode);
         if (currentSolutionNode.ringNum == 1) {
+            onlyOneRing = true;
             if (currentSolutionNode.apSum < upBound) {
                 upBound = currentSolutionNode.apSum;
             }
+            bestRoute = allRoutes.get(0);
             printRoutes();
             return;
         }
@@ -48,6 +54,10 @@ public class Search {
         //用优先队列,遍历节点
         while (!queue.isEmpty()) {
             if (TimeUtil.getTimeDelay() > timeLimit) {
+                break;
+            }
+            if (onlyOneRing && (TimeUtil.getTimeDelay() - bestTime >= Math.sqrt(Graph.vertexNum
+            ) + Graph.inSetNum[0] + Graph.inSetNum[1])) {
                 break;
             }
             currentSolutionNode = queue.poll();
@@ -61,14 +71,17 @@ public class Search {
                 continue;
             }
             if (currentSolutionNode.ringNum == 1) {
+                onlyOneRing = true;
                 if (currentSolutionNode.apSum < upBound) {
                     upBound = currentSolutionNode.apSum;
+                    bestTime = TimeUtil.getTimeDelay();
+                    bestRoute = allRoutes.get(0);
                 }
-                printRoutes();
                 continue;
             }
             getRequiredAndForbidden(currentSolutionNode);
         }
+        printRoutes();
     }
 
     //初始化目标矩阵
@@ -78,7 +91,7 @@ public class Search {
                 if (Graph.edgeWeight[i][j] != 0) {
                     target[i][j] = weightMax - Graph.edgeWeight[i][j];
                 } else if (i != j || routeId == Graph.nodes[i].state || Graph.nodes[i].state == 3) {
-                    target[i][j] = weightMax- MAX_VALUE;
+                    target[i][j] = weightMax - MAX_VALUE;
                 } else {
                     target[i][j] = weightMax;//不是必经节点时,让它易于同自己连接(自己成环)
                 }
@@ -156,6 +169,7 @@ public class Search {
 //        System.out.println("ringNum:" + ringNum + ";apSum:" + apSum);
     }
 
+    //根据破开的环(forbidden)与必须留在路径中的环,来修改ap问题中的目标矩阵
     private static int[][] modifyTargetMatrix(SolutionNode solutionNode) {
         int[][] modifiedTargetMatrix = new int[Graph.vertexNum][Graph.vertexNum];
         for (int i = 0; i < target.length; i++) {
@@ -182,15 +196,13 @@ public class Search {
 
     //打印路径
     private static void printRoutes() {
-        for (List<Integer> route : allRoutes) {
-            for (int i = 0; i < route.size() - 2; i++) {
-                int id1 = route.get(i);
-                int id2 = route.get(i + 1);
-                System.out.print(Graph.edgeId[id1][id2] + "->");
-            }
-            System.out.print("\n");
-            System.out.println("upBound:" + upBound + ";q.size:" + queue.size());
+        for (int i = 0; i < bestRoute.size() - 2; i++) {
+            int id1 = bestRoute.get(i);
+            int id2 = bestRoute.get(i + 1);
+            System.out.print(Graph.edgeId[id1][id2] + "->");
         }
+        System.out.print("\n");
+        System.out.println("sum:" + upBound );
     }
 
 }
