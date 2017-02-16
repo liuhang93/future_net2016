@@ -70,7 +70,7 @@ public class Graph {
             String[] content = route.split("[,|]");
             int routeId = Integer.parseInt(content[0]);
             for (int i = 1; i < content.length; i++) {
-                if (content[i] == "NA") {
+                if (content[i].equals("NA")) {
                     break;
                 }
                 int num = Integer.parseInt(content[i]);
