@@ -8,7 +8,7 @@ import java.util.Arrays;
  */
 public class Graph {
 
-    public static final int vertexNumMax = 2000;//最大顶点数
+    public static final int vertexNumMax = 2002;//最大顶点数
     public static final int outDegMax = 22;//每个点的最大出度为20;设为22为加边处理
     public static final int demandNumMax = 102;//最大必经节点数(算上起点终点)
 

@@ -17,35 +17,39 @@ import java.util.Queue;
  */
 public class Search {
     private static final int weightMax = 100;//权重最大值
-    private static final int MAX_VALUE = 10000;//一个很大值
+    private static final int MAX_VALUE = 100000;//一个很大值
 
     private static Queue<SolutionNode> queue = new PriorityQueue<>(3, new MyComparator());
     private static List<List<Integer>> allRoutes = new ArrayList<>(); //一次ap之后,存放所有的环
     private static int[][] target = new int[Graph.vertexNum][Graph.vertexNum];//ap的目标矩阵
     private static int shortestRingIndex;//一次ap后,所有环中顶点数最少的环的索引
     private static int upBound;//分支定界的上界
-    private static boolean onlyOneRing;//ap之后是否只有一个环
     private static long bestTime;//更新上界时的时间
     private static List<Integer> bestRoute;//存放当前权值最低路径
+    private static int punishment = 1;//另一条路径经过的边进行惩罚
     public static SolutionNode currentSolutionNode;//从优先队列中取出的解节点
 
     //分支定界法
     public static List<Integer> branchAndBound(int routeId, long timeLimit) {
+
         TimeUtil.updateTime();
-        onlyOneRing = false;
+        boolean onlyOneRing = false;
         upBound = MAX_VALUE;
         queue.clear();
+
         currentSolutionNode = new SolutionNode();
         initialTargetMatrix(routeId);
+        punishment = punishment + 1;
+
         KM.AP(routeId, currentSolutionNode, target);
         getRoute(routeId, currentSolutionNode);
         if (currentSolutionNode.ringNum == 1) {
-            onlyOneRing = true;
             if (currentSolutionNode.apSum < upBound) {
                 upBound = currentSolutionNode.apSum;
             }
             bestRoute = allRoutes.get(0);
-            printRoutes();
+            System.out.println("跳出0");
+//            printRoutes();
             return bestRoute;
         }
         //进行分支,选择最短的环,破开,修改目标矩阵
@@ -53,15 +57,18 @@ public class Search {
 
         //用优先队列,遍历节点
         while (!queue.isEmpty()) {
-            if (TimeUtil.getTimeDelay() > timeLimit) {
+            if (TimeUtil.getTimeDelay() > timeLimit && onlyOneRing) {
+                System.out.println("跳出1");
                 break;
             }
             if (onlyOneRing && (TimeUtil.getTimeDelay() - bestTime >= Math.sqrt(Graph.vertexNum
             ) + Graph.inSetNum[0] + Graph.inSetNum[1])) {
+                System.out.println("跳出2");
                 break;
             }
             currentSolutionNode = queue.poll();
             if (currentSolutionNode.apSum > upBound) {
+                System.out.println("跳出3");
                 break;
             }
             int[][] costMatrix = modifyTargetMatrix(currentSolutionNode);
@@ -81,7 +88,7 @@ public class Search {
             }
             getRequiredAndForbidden(currentSolutionNode);
         }
-        printRoutes();
+//        printRoutes();
         return bestRoute;
     }
 
@@ -99,6 +106,14 @@ public class Search {
             }
         }
         target[Graph.vertexDemand[0][1]][Graph.vertexDemand[0][0]] = weightMax;
+        if (Route.bestRoutes.get(2 - routeId) != null) {
+            List<Integer> route = Route.bestRoutes.get(2 - routeId);
+            for (int i = 0; i < route.size() - 2; i++) {
+                int id1 = route.get(i);
+                int id2 = route.get(i + 1);
+                target[id1][id2] -= punishment;
+            }
+        }
     }
 
     //获取破开的边,并加入队列
@@ -203,7 +218,7 @@ public class Search {
             System.out.print(Graph.edgeId[id1][id2] + "->");
         }
         System.out.print("\n");
-        System.out.println("sum:" + upBound );
+        System.out.println("sum:" + upBound);
     }
 
 }
