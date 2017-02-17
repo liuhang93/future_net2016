@@ -89,8 +89,8 @@ public class KM {
         }
     }
 
-    public static void AP(int routeid, SolutionNode solutionNode, int[][] target) {
-        routeId = routeid;
+    public static void AP(int id, SolutionNode solutionNode, int[][] target) {
+        routeId = id;
         for (int i = 0; i < target.length; i++) {
             weight[i] = Arrays.copyOf(target[i], target[i].length);
         }

@@ -7,4 +7,4 @@
 
 ## 思路
 - 指派问题(匈牙利算法/KM算法)+分支定界(branch and bound)
-- 详细思路见 [我的博客](http://liuhang.net.cn/)
+- 详细思路见 [我的个人博客](http://liuhang.net.cn/)或[我的oschina博客](https://my.oschina.net/husthang/blog)

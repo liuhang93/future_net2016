@@ -39,7 +39,7 @@ public class Search {
 
         currentSolutionNode = new SolutionNode();
         initialTargetMatrix(routeId);
-        punishment = punishment + 1;
+        punishment = punishment + 1;//惩罚量递增
 
         KM.AP(routeId, currentSolutionNode, target);
         getRoute(routeId, currentSolutionNode);
@@ -48,7 +48,7 @@ public class Search {
                 upBound = currentSolutionNode.apSum;
             }
             bestRoute = allRoutes.get(0);
-            System.out.println("跳出0");
+            System.out.println("跳出0");//调试信息,方便看运行过程
 //            printRoutes();
             return bestRoute;
         }
@@ -58,17 +58,17 @@ public class Search {
         //用优先队列,遍历节点
         while (!queue.isEmpty()) {
             if (TimeUtil.getTimeDelay() > timeLimit && onlyOneRing) {
-                System.out.println("跳出1");
+                System.out.println("跳出1");//调试信息,方便看运行过程
                 break;
             }
             if (onlyOneRing && (TimeUtil.getTimeDelay() - bestTime >= Math.sqrt(Graph.vertexNum
             ) + Graph.inSetNum[0] + Graph.inSetNum[1])) {
-                System.out.println("跳出2");
+                System.out.println("跳出2");//调试信息,方便看运行过程
                 break;
             }
             currentSolutionNode = queue.poll();
             if (currentSolutionNode.apSum > upBound) {
-                System.out.println("跳出3");
+                System.out.println("跳出3");//调试信息,方便看运行过程
                 break;
             }
             int[][] costMatrix = modifyTargetMatrix(currentSolutionNode);
@@ -144,7 +144,7 @@ public class Search {
 
     }
 
-    //对目标矩阵ap(指派)后,求环的数目和指派后的权值
+    //对目标矩阵ap(指派)后,对所有必须经过的节点,求环的数目和指派后的权值
     private static void getRoute(int routeId, SolutionNode solutionNode) {
         allRoutes.clear();
         int ringNum = 0;//环数

@@ -49,7 +49,7 @@ public final class Route {
                 System.out.println("跳2");
                 break;
             }
-            bestRoutes.put(routeId - 1, Search.branchAndBound(routeId, 2000));
+            bestRoutes.put(routeId - 1, Search.branchAndBound(routeId, 4000));
             routeId = 3 - routeId;
 
         }
@@ -61,13 +61,14 @@ public final class Route {
 //        return new String[]{"0|1|2", "5|6|2"};
     }
 
+    //计算两条路径的充边数
     private static int getRepeatNum() {
         List<Integer> route1 = bestRoutes.get(0);
         List<Integer> route2 = bestRoutes.get(1);
         int repeatNum = 0;
-        for(int i=0;i<route1.size()-2;i++) {
-            int edgeId1 =Graph.edgeId[route1.get(i)][route1.get(i + 1)];
-            for(int j=0;j<route2.size()-2;j++) {
+        for (int i = 0; i < route1.size() - 2; i++) {
+            int edgeId1 = Graph.edgeId[route1.get(i)][route1.get(i + 1)];
+            for (int j = 0; j < route2.size() - 2; j++) {
                 int edgeId2 = Graph.edgeId[route2.get(j)][route2.get(j + 1)];
                 if (edgeId1 == edgeId2) {
                     repeatNum++;
@@ -89,22 +90,23 @@ public final class Route {
         return str;
     }
 
-    private static void printRoute(){
+    //打印路径等信息(用于调试)
+    private static void printRoute() {
         int[] sum = new int[2];
         int j = 0;
-        for (Map.Entry<Integer,List<Integer>> entry : bestRoutes.entrySet()) {
+        for (Map.Entry<Integer, List<Integer>> entry : bestRoutes.entrySet()) {
             sum[j] = 0;
             List<Integer> route = entry.getValue();
-            System.out.println("路径"+j+":");
-            for(int i=0;i<route.size()-2;i++) {
+            System.out.println("路径" + (j + 1) + ":");
+            for (int i = 0; i < route.size() - 2; i++) {
                 int id1 = route.get(i);
                 int id2 = route.get(i + 1);
                 sum[j] += Graph.edgeWeight[id1][id2];
                 System.out.print(Graph.edgeId[id1][id2] + "->");
             }
-            System.out.print("\nsum:"+sum[j]+"\n");
+            System.out.print("\nsum:" + sum[j] + "\n");
             j++;
         }
-        System.out.println("sumTotal:"+(sum[0]+sum[1]));
+        System.out.println("sumTotal:" + (sum[0] + sum[1]));
     }
 }
